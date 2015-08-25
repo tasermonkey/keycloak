@@ -73,7 +73,11 @@ public class FolderTheme implements Theme {
         if (File.separatorChar != '/') {
             path = path.replace('/', File.separatorChar);
         }
-        File file = new File(themeDir, "/resources/" + path);
+        // getCanonicalFile resolves all '../'
+        File file = new File(themeDir, "/resources/" + path).getCanonicalFile();
+        if ( !file.getPath().startsWith(themeDir.getCanonicalPath()) ) {
+            throw new IllegalArgumentException("Attempt breaking out of theme dir.");
+        }
         return file.isFile() ? file.toURI().toURL() : null;
     }
 
