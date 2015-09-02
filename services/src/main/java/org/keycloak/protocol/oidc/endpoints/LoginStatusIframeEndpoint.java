@@ -1,11 +1,11 @@
 package org.keycloak.protocol.oidc.endpoints;
 
 import org.jboss.resteasy.spi.BadRequestException;
-import org.jboss.resteasy.spi.NotFoundException;
 import org.keycloak.Config;
 import org.keycloak.models.ClientModel;
 import org.keycloak.models.RealmModel;
 import org.keycloak.protocol.oidc.utils.RedirectUtils;
+import org.keycloak.services.NotFoundPlainTextException;
 import org.keycloak.util.StreamUtil;
 import org.keycloak.util.UriUtils;
 
@@ -44,11 +44,11 @@ public class LoginStatusIframeEndpoint {
 
         ClientModel client = realm.getClientByClientId(client_id);
         if (client == null) {
-            throw new NotFoundException("could not find client");
+            throw new NotFoundPlainTextException("could not find client");
         }
 
         InputStream is = getClass().getClassLoader().getResourceAsStream("login-status-iframe.html");
-        if (is == null) throw new NotFoundException("Could not find login-status-iframe.html ");
+        if (is == null) throw new NotFoundPlainTextException("Could not find login-status-iframe.html ");
 
         boolean valid = false;
         for (String o : client.getWebOrigins()) {

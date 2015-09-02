@@ -1,7 +1,6 @@
 package org.keycloak.services.resources.admin;
 
 import org.jboss.resteasy.annotations.cache.NoCache;
-import org.jboss.resteasy.spi.NotFoundException;
 import org.keycloak.models.ClientModel;
 import org.keycloak.models.ModelDuplicateException;
 import org.keycloak.models.RealmModel;
@@ -10,6 +9,7 @@ import org.keycloak.models.RoleModel;
 import org.keycloak.models.utils.ModelToRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.services.ErrorResponse;
+import org.keycloak.services.NotFoundPlainTextException;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -98,7 +98,7 @@ public class RoleContainerResource extends RoleResource {
 
         RoleModel roleModel = roleContainer.getRole(roleName);
         if (roleModel == null) {
-            throw new NotFoundException("Could not find role: " + roleName);
+            throw new NotFoundPlainTextException("Could not find role: " + roleName);
         }
 
         return getRole(roleModel);
@@ -118,7 +118,7 @@ public class RoleContainerResource extends RoleResource {
         RoleRepresentation rep = getRole(roleName);
         RoleModel role = roleContainer.getRole(roleName);
         if (role == null) {
-            throw new NotFoundException("Could not find role: " + roleName);
+            throw new NotFoundPlainTextException("Could not find role: " + roleName);
         }
         deleteRole(role);
     }
@@ -138,7 +138,7 @@ public class RoleContainerResource extends RoleResource {
 
         RoleModel role = roleContainer.getRole(roleName);
         if (role == null) {
-            throw new NotFoundException("Could not find role: " + roleName);
+            throw new NotFoundPlainTextException("Could not find role: " + roleName);
         }
         try {
             updateRole(rep, role);
@@ -162,7 +162,7 @@ public class RoleContainerResource extends RoleResource {
 
         RoleModel role = roleContainer.getRole(roleName);
         if (role == null) {
-            throw new NotFoundException("Could not find role: " + roleName);
+            throw new NotFoundPlainTextException("Could not find role: " + roleName);
         }
         addComposites(roles, role);
     }
@@ -182,7 +182,7 @@ public class RoleContainerResource extends RoleResource {
 
         RoleModel role = roleContainer.getRole(roleName);
         if (role == null) {
-            throw new NotFoundException("Could not find role: " + roleName);
+            throw new NotFoundPlainTextException("Could not find role: " + roleName);
         }
         return getRoleComposites(role);
     }
@@ -202,7 +202,7 @@ public class RoleContainerResource extends RoleResource {
 
         RoleModel role = roleContainer.getRole(roleName);
         if (role == null) {
-            throw new NotFoundException("Could not find role: " + roleName);
+            throw new NotFoundPlainTextException("Could not find role: " + roleName);
         }
         return getRealmRoleComposites(role);
     }
@@ -224,11 +224,11 @@ public class RoleContainerResource extends RoleResource {
 
         RoleModel role = roleContainer.getRole(roleName);
         if (role == null) {
-            throw new NotFoundException("Could not find role: " + roleName);
+            throw new NotFoundPlainTextException("Could not find role: " + roleName);
         }
         ClientModel app = realm.getClientByClientId(clientId);
         if (app == null) {
-            throw new NotFoundException("Could not find client: " + clientId);
+            throw new NotFoundPlainTextException("Could not find client: " + clientId);
 
         }
         return getClientRoleComposites(app, role);
@@ -252,11 +252,11 @@ public class RoleContainerResource extends RoleResource {
 
         RoleModel role = roleContainer.getRole(roleName);
         if (role == null) {
-            throw new NotFoundException("Could not find role: " + roleName);
+            throw new NotFoundPlainTextException("Could not find role: " + roleName);
         }
         ClientModel client = realm.getClientById(id);
         if (client == null) {
-            throw new NotFoundException("Could not find client: " + id);
+            throw new NotFoundPlainTextException("Could not find client: " + id);
 
         }
         return getClientRoleComposites(client, role);
@@ -277,7 +277,7 @@ public class RoleContainerResource extends RoleResource {
 
         RoleModel role = roleContainer.getRole(roleName);
         if (role == null) {
-            throw new NotFoundException("Could not find role: " + roleName);
+            throw new NotFoundPlainTextException("Could not find role: " + roleName);
         }
         deleteComposites(roles, role);
     }

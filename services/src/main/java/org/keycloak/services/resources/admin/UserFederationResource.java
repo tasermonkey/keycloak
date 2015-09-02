@@ -2,7 +2,6 @@ package org.keycloak.services.resources.admin;
 
 import org.jboss.logging.Logger;
 import org.jboss.resteasy.annotations.cache.NoCache;
-import org.jboss.resteasy.spi.NotFoundException;
 import org.keycloak.constants.KerberosConstants;
 import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.RealmModel;
@@ -15,6 +14,7 @@ import org.keycloak.models.utils.ModelToRepresentation;
 import org.keycloak.provider.ProviderFactory;
 import org.keycloak.representations.idm.UserFederationProviderFactoryRepresentation;
 import org.keycloak.representations.idm.UserFederationProviderRepresentation;
+import org.keycloak.services.NotFoundPlainTextException;
 import org.keycloak.services.managers.UsersSyncManager;
 import org.keycloak.timer.TimerProvider;
 
@@ -101,7 +101,7 @@ public class UserFederationResource {
             rep.setOptions(((UserFederationProviderFactory)factory).getConfigurationOptions());
             return rep;
         }
-        throw new NotFoundException("Could not find provider");
+        throw new NotFoundPlainTextException("Could not find provider");
     }
 
     /**
@@ -165,7 +165,7 @@ public class UserFederationResource {
             }
         }
         
-        throw new NotFoundException("could not find provider");
+        throw new NotFoundPlainTextException("could not find provider");
     }
 
     /**
@@ -228,7 +228,7 @@ public class UserFederationResource {
             }
         }
 
-        throw new NotFoundException("could not find provider");
+        throw new NotFoundPlainTextException("could not find provider");
     }
 
     // Automatically add "kerberos" to required realm credentials if it's supported by saved provider

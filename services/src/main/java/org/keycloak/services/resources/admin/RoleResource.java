@@ -1,11 +1,11 @@
 package org.keycloak.services.resources.admin;
 
-import org.jboss.resteasy.spi.NotFoundException;
 import org.keycloak.models.ClientModel;
 import org.keycloak.models.RealmModel;
 import org.keycloak.models.RoleModel;
 import org.keycloak.models.utils.ModelToRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
+import org.keycloak.services.NotFoundPlainTextException;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -29,7 +29,7 @@ public abstract class RoleResource {
 
     protected void deleteRole(RoleModel role) {
         if (!role.getContainer().removeRole(role)) {
-            throw new NotFoundException("Role not found");
+            throw new NotFoundPlainTextException("Role not found");
         }
     }
 
@@ -42,7 +42,7 @@ public abstract class RoleResource {
         for (RoleRepresentation rep : roles) {
             RoleModel composite = realm.getRoleById(rep.getId());
             if (composite == null) {
-                throw new NotFoundException("Could not find composite role: " + rep.getName());
+                throw new NotFoundPlainTextException("Could not find composite role: " + rep.getName());
             }
             role.addCompositeRole(composite);
         }
@@ -84,7 +84,7 @@ public abstract class RoleResource {
         for (RoleRepresentation rep : roles) {
             RoleModel composite = realm.getRoleById(rep.getId());
             if (composite == null) {
-                throw new NotFoundException("Could not find composite role: " + rep.getName());
+                throw new NotFoundPlainTextException("Could not find composite role: " + rep.getName());
             }
             role.removeCompositeRole(composite);
         }

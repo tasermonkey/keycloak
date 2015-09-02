@@ -1,13 +1,13 @@
 package org.keycloak.services.resources.admin;
 
 import org.jboss.resteasy.annotations.cache.NoCache;
-import org.jboss.resteasy.spi.NotFoundException;
 import org.keycloak.models.ClientModel;
 import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.RealmModel;
 import org.keycloak.models.RoleModel;
 import org.keycloak.models.utils.ModelToRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
+import org.keycloak.services.NotFoundPlainTextException;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -103,7 +103,7 @@ public class ScopeMappedClientResource {
         for (RoleRepresentation role : roles) {
             RoleModel roleModel = scopedClient.getRole(role.getName());
             if (roleModel == null) {
-                throw new NotFoundException("Role not found");
+                throw new NotFoundPlainTextException("Role not found");
             }
             client.addScopeMapping(roleModel);
         }
@@ -130,7 +130,7 @@ public class ScopeMappedClientResource {
             for (RoleRepresentation role : roles) {
                 RoleModel roleModel = scopedClient.getRole(role.getName());
                 if (roleModel == null) {
-                    throw new NotFoundException("Role not found");
+                    throw new NotFoundPlainTextException("Role not found");
                 }
                 client.deleteScopeMapping(roleModel);
             }

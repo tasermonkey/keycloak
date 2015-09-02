@@ -5,7 +5,6 @@ import org.jboss.logging.Logger;
 import org.jboss.resteasy.annotations.cache.NoCache;
 import org.jboss.resteasy.spi.HttpRequest;
 import org.jboss.resteasy.spi.HttpResponse;
-import org.jboss.resteasy.spi.NotFoundException;
 import org.keycloak.ClientConnection;
 import org.keycloak.Version;
 import org.keycloak.freemarker.BrowserSecurityHeaderSetup;
@@ -21,6 +20,7 @@ import org.keycloak.models.RealmModel;
 import org.keycloak.models.RoleModel;
 import org.keycloak.models.UserModel;
 import org.keycloak.protocol.oidc.OIDCLoginProtocolService;
+import org.keycloak.services.NotFoundPlainTextException;
 import org.keycloak.services.managers.AppAuthManager;
 import org.keycloak.services.managers.ClientManager;
 import org.keycloak.services.managers.AuthenticationManager;
@@ -156,7 +156,7 @@ public class AdminConsole {
     public ClientManager.InstallationAdapterConfig config() {
         ClientModel consoleApp = realm.getClientByClientId(Constants.ADMIN_CONSOLE_CLIENT_ID);
         if (consoleApp == null) {
-            throw new NotFoundException("Could not find admin console client");
+            throw new NotFoundPlainTextException("Could not find admin console client");
         }
         return new ClientManager().toInstallationRepresentation(realm, consoleApp, keycloak.getBaseUri(uriInfo));
 
@@ -192,7 +192,7 @@ public class AdminConsole {
         RealmModel masterRealm = getAdminstrationRealm(realmManager);
         Map<String, Set<String>> realmAccess = new HashMap<String, Set<String>>();
         if (masterRealm == null)
-            throw new NotFoundException("No realm found");
+            throw new NotFoundPlainTextException("No realm found");
         boolean createRealm = false;
         if (realm.equals(masterRealm)) {
             logger.debug("setting up realm access for a master realm user");

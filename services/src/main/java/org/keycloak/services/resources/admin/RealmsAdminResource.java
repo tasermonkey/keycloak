@@ -4,7 +4,6 @@ import org.jboss.logging.Logger;
 import org.jboss.resteasy.annotations.cache.NoCache;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
-import org.jboss.resteasy.spi.NotFoundException;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.keycloak.models.AdminRoles;
 import org.keycloak.models.ClientModel;
@@ -16,6 +15,7 @@ import org.keycloak.models.utils.ModelToRepresentation;
 import org.keycloak.protocol.oidc.TokenManager;
 import org.keycloak.representations.idm.RealmRepresentation;
 import org.keycloak.services.ForbiddenException;
+import org.keycloak.services.NotFoundPlainTextException;
 import org.keycloak.services.managers.RealmManager;
 import org.keycloak.services.resources.KeycloakApplication;
 import org.keycloak.services.ErrorResponse;
@@ -205,7 +205,7 @@ public class RealmsAdminResource {
                                             @PathParam("realm") final String name) {
         RealmManager realmManager = new RealmManager(session);
         RealmModel realm = realmManager.getRealmByName(name);
-        if (realm == null) throw new NotFoundException("{realm} = " + name);
+        if (realm == null) throw new NotFoundPlainTextException("{realm} = " + name);
 
         if (!auth.getRealm().equals(realmManager.getKeycloakAdminstrationRealm())
                 && !auth.getRealm().equals(realm)) {

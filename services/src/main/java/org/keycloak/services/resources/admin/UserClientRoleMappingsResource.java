@@ -2,13 +2,13 @@ package org.keycloak.services.resources.admin;
 
 import org.jboss.logging.Logger;
 import org.jboss.resteasy.annotations.cache.NoCache;
-import org.jboss.resteasy.spi.NotFoundException;
 import org.keycloak.models.ClientModel;
 import org.keycloak.models.RealmModel;
 import org.keycloak.models.RoleModel;
 import org.keycloak.models.UserModel;
 import org.keycloak.models.utils.ModelToRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
+import org.keycloak.services.NotFoundPlainTextException;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -123,7 +123,7 @@ public class UserClientRoleMappingsResource {
         for (RoleRepresentation role : roles) {
             RoleModel roleModel = client.getRole(role.getName());
             if (roleModel == null || !roleModel.getId().equals(role.getId())) {
-                throw new NotFoundException("Role not found");
+                throw new NotFoundPlainTextException("Role not found");
             }
             user.grantRole(roleModel);
         }
@@ -154,7 +154,7 @@ public class UserClientRoleMappingsResource {
             for (RoleRepresentation role : roles) {
                 RoleModel roleModel = client.getRole(role.getName());
                 if (roleModel == null || !roleModel.getId().equals(role.getId())) {
-                    throw new NotFoundException("Role not found");
+                    throw new NotFoundPlainTextException("Role not found");
                 }
                 user.deleteRoleMapping(roleModel);
             }

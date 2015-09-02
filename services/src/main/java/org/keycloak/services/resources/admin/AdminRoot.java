@@ -4,7 +4,6 @@ import org.jboss.logging.Logger;
 import org.jboss.resteasy.spi.HttpRequest;
 import org.jboss.resteasy.spi.HttpResponse;
 import org.jboss.resteasy.spi.NoLogWebApplicationException;
-import org.jboss.resteasy.spi.NotFoundException;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.jboss.resteasy.spi.UnauthorizedException;
 import org.keycloak.ClientConnection;
@@ -16,6 +15,7 @@ import org.keycloak.models.RealmModel;
 import org.keycloak.protocol.oidc.TokenManager;
 import org.keycloak.representations.AccessToken;
 import org.keycloak.services.ForbiddenException;
+import org.keycloak.services.NotFoundPlainTextException;
 import org.keycloak.services.managers.AppAuthManager;
 import org.keycloak.services.managers.AuthenticationManager;
 import org.keycloak.services.managers.RealmManager;
@@ -99,7 +99,7 @@ public class AdminRoot {
     protected RealmModel locateRealm(String name, RealmManager realmManager) {
         RealmModel realm = realmManager.getRealmByName(name);
         if (realm == null) {
-            throw new NotFoundException("Realm " + name + " not found");
+            throw new NotFoundPlainTextException("Realm " + name + " not found");
         }
         return realm;
     }
@@ -153,7 +153,7 @@ public class AdminRoot {
 
         ClientModel client = realm.getClientByClientId(token.getIssuedFor());
         if (client == null) {
-            throw new NotFoundException("Could not find client for authorization");
+            throw new NotFoundPlainTextException("Could not find client for authorization");
 
         }
 

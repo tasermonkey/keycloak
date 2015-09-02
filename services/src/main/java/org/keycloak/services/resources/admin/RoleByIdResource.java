@@ -2,13 +2,13 @@ package org.keycloak.services.resources.admin;
 
 import org.jboss.logging.Logger;
 import org.jboss.resteasy.annotations.cache.NoCache;
-import org.jboss.resteasy.spi.NotFoundException;
 import org.keycloak.models.ClientModel;
 import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.RealmModel;
 import org.keycloak.models.RoleModel;
 import org.keycloak.models.UserModel;
 import org.keycloak.representations.idm.RoleRepresentation;
+import org.keycloak.services.NotFoundPlainTextException;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -64,7 +64,7 @@ public class RoleByIdResource extends RoleResource {
     protected RoleModel getRoleModel(String id) {
         RoleModel roleModel = realm.getRoleById(id);
         if (roleModel == null) {
-            throw new NotFoundException("Could not find role with id: " + id);
+            throw new NotFoundPlainTextException("Could not find role with id: " + id);
         }
 
         RealmAuth.Resource r = null;
@@ -175,7 +175,7 @@ public class RoleByIdResource extends RoleResource {
         auth.requireView();
         ClientModel app = realm.getClientByClientId(appName);
         if (app == null) {
-            throw new NotFoundException("Could not find client: " + appName);
+            throw new NotFoundPlainTextException("Could not find client: " + appName);
 
         }
         return getClientRoleComposites(app, role);
@@ -198,7 +198,7 @@ public class RoleByIdResource extends RoleResource {
         auth.requireView();
         ClientModel app = realm.getClientById(appId);
         if (app == null) {
-            throw new NotFoundException("Could not find client: " + appId);
+            throw new NotFoundPlainTextException("Could not find client: " + appId);
 
         }
         return getClientRoleComposites(app, role);

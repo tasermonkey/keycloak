@@ -2,7 +2,6 @@ package org.keycloak.services.resources.admin;
 
 import org.jboss.logging.Logger;
 import org.jboss.resteasy.annotations.cache.NoCache;
-import org.jboss.resteasy.spi.NotFoundException;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.keycloak.ClientConnection;
 import org.keycloak.events.Event;
@@ -24,6 +23,7 @@ import org.keycloak.protocol.oidc.TokenManager;
 import org.keycloak.representations.adapters.action.GlobalRequestResult;
 import org.keycloak.representations.idm.RealmEventsConfigRepresentation;
 import org.keycloak.representations.idm.RealmRepresentation;
+import org.keycloak.services.NotFoundPlainTextException;
 import org.keycloak.services.managers.AuthenticationManager;
 import org.keycloak.services.managers.LDAPConnectionTestManager;
 import org.keycloak.services.managers.RealmManager;
@@ -208,7 +208,7 @@ public class RealmAdminResource {
         auth.requireManage();
 
         if (!new RealmManager(session).removeRealm(realm)) {
-            throw new NotFoundException("Realm doesn't exist");
+            throw new NotFoundPlainTextException("Realm doesn't exist");
         }
     }
 
@@ -279,7 +279,7 @@ public class RealmAdminResource {
     @DELETE
     public void deleteSession(@PathParam("session") String sessionId) {
         UserSessionModel userSession = session.sessions().getUserSession(realm, sessionId);
-        if (userSession == null) throw new NotFoundException("Sesssion not found");
+        if (userSession == null) throw new NotFoundPlainTextException("Sesssion not found");
         AuthenticationManager.backchannelLogout(session, realm, userSession, uriInfo, connection, headers, true);
     }
 

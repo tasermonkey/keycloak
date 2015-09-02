@@ -2,13 +2,13 @@ package org.keycloak.services.resources.admin;
 
 import org.jboss.logging.Logger;
 import org.jboss.resteasy.annotations.cache.NoCache;
-import org.jboss.resteasy.spi.NotFoundException;
 import org.keycloak.models.ClientModel;
 import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.ProtocolMapperModel;
 import org.keycloak.models.utils.ModelToRepresentation;
 import org.keycloak.models.utils.RepresentationToModel;
 import org.keycloak.representations.idm.ProtocolMapperRepresentation;
+import org.keycloak.services.NotFoundPlainTextException;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -121,7 +121,7 @@ public class ProtocolMappersResource {
     public ProtocolMapperRepresentation getMapperById(@PathParam("id") String id) {
         auth.requireView();
         ProtocolMapperModel model = client.getProtocolMapperById(id);
-        if (model == null) throw new NotFoundException("Model not found");
+        if (model == null) throw new NotFoundPlainTextException("Model not found");
         return ModelToRepresentation.toRepresentation(model);
     }
 
@@ -132,7 +132,7 @@ public class ProtocolMappersResource {
     public void update(@PathParam("id") String id, ProtocolMapperRepresentation rep) {
         auth.requireManage();
         ProtocolMapperModel model = client.getProtocolMapperById(id);
-        if (model == null) throw new NotFoundException("Model not found");
+        if (model == null) throw new NotFoundPlainTextException("Model not found");
         model = RepresentationToModel.toModel(rep);
         client.updateProtocolMapper(model);
     }
@@ -143,7 +143,7 @@ public class ProtocolMappersResource {
     public void delete(@PathParam("id") String id) {
         auth.requireManage();
         ProtocolMapperModel model = client.getProtocolMapperById(id);
-        if (model == null) throw new NotFoundException("Model not found");
+        if (model == null) throw new NotFoundPlainTextException("Model not found");
         client.removeProtocolMapper(model);
     }
 

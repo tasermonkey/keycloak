@@ -3,7 +3,6 @@ package org.keycloak.services.resources.admin;
 import org.jboss.resteasy.annotations.cache.NoCache;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
-import org.jboss.resteasy.spi.NotFoundException;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.keycloak.broker.provider.IdentityProvider;
 import org.keycloak.broker.provider.IdentityProviderFactory;
@@ -17,6 +16,7 @@ import org.keycloak.models.utils.RepresentationToModel;
 import org.keycloak.provider.ProviderFactory;
 import org.keycloak.representations.idm.IdentityProviderRepresentation;
 import org.keycloak.services.ErrorResponse;
+import org.keycloak.services.NotFoundPlainTextException;
 import org.keycloak.social.SocialIdentityProvider;
 
 import javax.ws.rs.Consumes;
@@ -150,7 +150,7 @@ public class IdentityProvidersResource {
         }
 
         if (identityProviderModel == null) {
-            throw new NotFoundException("Could not find identity provider: " + alias);
+            throw new NotFoundPlainTextException("Could not find identity provider: " + alias);
         }
 
         IdentityProviderResource identityProviderResource = new IdentityProviderResource(this.auth, realm, session, identityProviderModel);

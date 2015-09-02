@@ -2,7 +2,6 @@ package org.keycloak.services.resources.admin;
 
 import org.jboss.logging.Logger;
 import org.jboss.resteasy.annotations.cache.NoCache;
-import org.jboss.resteasy.spi.NotFoundException;
 import org.keycloak.broker.provider.IdentityProvider;
 import org.keycloak.broker.provider.IdentityProviderFactory;
 import org.keycloak.broker.provider.IdentityProviderMapper;
@@ -26,6 +25,7 @@ import org.keycloak.representations.idm.IdentityProviderMapperTypeRepresentation
 import org.keycloak.representations.idm.IdentityProviderRepresentation;
 import org.keycloak.services.ErrorResponse;
 import org.keycloak.representations.idm.ProtocolMapperRepresentation;
+import org.keycloak.services.NotFoundPlainTextException;
 import org.keycloak.social.SocialIdentityProvider;
 
 import javax.ws.rs.Consumes;
@@ -236,7 +236,7 @@ public class IdentityProviderResource {
     public IdentityProviderMapperRepresentation getMapperById(@PathParam("id") String id) {
         auth.requireView();
         IdentityProviderMapperModel model = realm.getIdentityProviderMapperById(id);
-        if (model == null) throw new NotFoundException("Model not found");
+        if (model == null) throw new NotFoundPlainTextException("Model not found");
         return ModelToRepresentation.toRepresentation(model);
     }
 
@@ -247,7 +247,7 @@ public class IdentityProviderResource {
     public void update(@PathParam("id") String id, IdentityProviderMapperRepresentation rep) {
         auth.requireManage();
         IdentityProviderMapperModel model = realm.getIdentityProviderMapperById(id);
-        if (model == null) throw new NotFoundException("Model not found");
+        if (model == null) throw new NotFoundPlainTextException("Model not found");
         model = RepresentationToModel.toModel(rep);
         realm.updateIdentityProviderMapper(model);
     }
@@ -258,7 +258,7 @@ public class IdentityProviderResource {
     public void delete(@PathParam("id") String id) {
         auth.requireManage();
         IdentityProviderMapperModel model = realm.getIdentityProviderMapperById(id);
-        if (model == null) throw new NotFoundException("Model not found");
+        if (model == null) throw new NotFoundPlainTextException("Model not found");
         realm.removeIdentityProviderMapper(model);
     }
 

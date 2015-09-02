@@ -1,7 +1,6 @@
 package org.keycloak.services.resources;
 
 import org.jboss.logging.Logger;
-import org.jboss.resteasy.spi.NotFoundException;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.keycloak.ClientConnection;
 import org.keycloak.events.EventBuilder;
@@ -13,6 +12,7 @@ import org.keycloak.protocol.LoginProtocol;
 import org.keycloak.protocol.LoginProtocolFactory;
 import org.keycloak.protocol.oidc.OIDCLoginProtocol;
 import org.keycloak.protocol.oidc.OIDCLoginProtocolService;
+import org.keycloak.services.NotFoundPlainTextException;
 import org.keycloak.services.managers.AuthenticationManager;
 import org.keycloak.services.managers.BruteForceProtector;
 import org.keycloak.services.managers.RealmManager;
@@ -125,7 +125,7 @@ public class RealmsResource {
         RealmManager realmManager = new RealmManager(session);
         RealmModel realm = realmManager.getRealmByName(realmName);
         if (realm == null) {
-            throw new NotFoundException("Realm does not exist");
+            throw new NotFoundPlainTextException("Realm does not exist");
         }
         session.getContext().setRealm(realm);
         return realm;
@@ -138,7 +138,7 @@ public class RealmsResource {
         ClientModel client = realm.getClientNameMap().get(Constants.ACCOUNT_MANAGEMENT_CLIENT_ID);
         if (client == null || !client.isEnabled()) {
             logger.debug("account management not enabled");
-            throw new NotFoundException("account management not enabled");
+            throw new NotFoundPlainTextException("account management not enabled");
         }
 
         EventBuilder event = new EventBuilder(realm, session, clientConnection);

@@ -3,7 +3,6 @@ package org.keycloak.services.resources.admin;
 import org.jboss.logging.Logger;
 import org.jboss.resteasy.annotations.cache.NoCache;
 import org.jboss.resteasy.spi.BadRequestException;
-import org.jboss.resteasy.spi.NotFoundException;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.keycloak.models.ClientModel;
 import org.keycloak.models.KeycloakSession;
@@ -19,6 +18,7 @@ import org.keycloak.representations.adapters.action.GlobalRequestResult;
 import org.keycloak.representations.idm.ClientRepresentation;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserSessionRepresentation;
+import org.keycloak.services.NotFoundPlainTextException;
 import org.keycloak.services.managers.ClientManager;
 import org.keycloak.services.managers.RealmManager;
 import org.keycloak.services.managers.ResourceAdminManager;
@@ -211,7 +211,7 @@ public class ClientResource {
 
         logger.debug("getClientSecret");
         UserCredentialModel model = UserCredentialModel.secret(client.getSecret());
-        if (model == null) throw new NotFoundException("Client does not have a secret");
+        if (model == null) throw new NotFoundPlainTextException("Client does not have a secret");
         return ModelToRepresentation.toRepresentation(model);
     }
 
@@ -354,7 +354,7 @@ public class ClientResource {
         auth.requireManage();
         UserModel user = session.users().getUserByUsername(username, realm);
         if (user == null) {
-            throw new NotFoundException("User not found");
+            throw new NotFoundPlainTextException("User not found");
         }
         new ResourceAdminManager(session).logoutUserFromClient(uriInfo.getRequestUri(), realm, client, user);
     }
@@ -392,7 +392,7 @@ public class ClientResource {
 
         Integer time = client.getRegisteredNodes().get(node);
         if (time == null) {
-            throw new NotFoundException("Client does not have a node " + node);
+            throw new NotFoundPlainTextException("Client does not have a node " + node);
         }
 
         client.unregisterNode(node);

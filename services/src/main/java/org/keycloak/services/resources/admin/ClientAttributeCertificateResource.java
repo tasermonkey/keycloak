@@ -5,11 +5,11 @@ import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 import org.jboss.resteasy.spi.BadRequestException;
 import org.jboss.resteasy.spi.NotAcceptableException;
-import org.jboss.resteasy.spi.NotFoundException;
 import org.keycloak.models.ClientModel;
 import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.RealmModel;
 import org.keycloak.models.utils.KeycloakModelUtils;
+import org.keycloak.services.NotFoundPlainTextException;
 import org.keycloak.util.CertificateUtils;
 import org.keycloak.util.PemUtils;
 
@@ -271,7 +271,7 @@ public class ClientAttributeCertificateResource {
         String privatePem = client.getAttribute(privateAttribute);
         String certPem = client.getAttribute(certificateAttribute);
         if (privatePem == null && certPem == null) {
-            throw new NotFoundException("keypair not generated for client");
+            throw new NotFoundPlainTextException("keypair not generated for client");
         }
         if (privatePem != null && config.getKeyPassword() == null) {
             throw new BadRequestException("Need to specify a key password for jks download");

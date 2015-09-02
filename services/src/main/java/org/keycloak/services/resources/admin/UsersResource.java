@@ -3,7 +3,6 @@ package org.keycloak.services.resources.admin;
 import org.jboss.logging.Logger;
 import org.jboss.resteasy.annotations.cache.NoCache;
 import org.jboss.resteasy.spi.BadRequestException;
-import org.jboss.resteasy.spi.NotFoundException;
 import org.keycloak.ClientConnection;
 import org.keycloak.email.EmailException;
 import org.keycloak.email.EmailProvider;
@@ -34,6 +33,7 @@ import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserConsentRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.keycloak.representations.idm.UserSessionRepresentation;
+import org.keycloak.services.NotFoundPlainTextException;
 import org.keycloak.services.managers.AuthenticationManager;
 import org.keycloak.services.managers.ClientSessionCode;
 import org.keycloak.services.managers.RealmManager;
@@ -113,7 +113,7 @@ public class UsersResource {
         try {
             UserModel user = session.users().getUserByUsername(username, realm);
             if (user == null) {
-                throw new NotFoundException("User not found");
+                throw new NotFoundPlainTextException("User not found");
             }
             updateUserFromRep(user, rep);
 
@@ -215,7 +215,7 @@ public class UsersResource {
 
         UserModel user = session.users().getUserByUsername(username, realm);
         if (user == null) {
-            throw new NotFoundException("User not found");
+            throw new NotFoundPlainTextException("User not found");
         }
 
         UserRepresentation rep = ModelToRepresentation.toRepresentation(user);
@@ -248,7 +248,7 @@ public class UsersResource {
         auth.requireView();
         UserModel user = session.users().getUserByUsername(username, realm);
         if (user == null) {
-            throw new NotFoundException("User not found");
+            throw new NotFoundPlainTextException("User not found");
         }
         List<UserSessionModel> sessions = session.sessions().getUserSessions(realm, user);
         List<UserSessionRepresentation> reps = new ArrayList<UserSessionRepresentation>();
@@ -273,7 +273,7 @@ public class UsersResource {
         auth.requireView();
         UserModel user = session.users().getUserByUsername(username, realm);
         if (user == null) {
-            throw new NotFoundException("User not found");
+            throw new NotFoundPlainTextException("User not found");
         }
 
         Set<FederatedIdentityModel> identities = session.users().getFederatedIdentities(user, realm);
@@ -297,7 +297,7 @@ public class UsersResource {
         auth.requireManage();
         UserModel user = session.users().getUserByUsername(username, realm);
         if (user == null) {
-            throw new NotFoundException("User not found");
+            throw new NotFoundPlainTextException("User not found");
         }
         if (session.users().getFederatedIdentity(user, provider, realm) != null) {
             return ErrorResponse.exists("User is already linked with provider");
@@ -316,10 +316,10 @@ public class UsersResource {
         auth.requireManage();
         UserModel user = session.users().getUserByUsername(username, realm);
         if (user == null) {
-            throw new NotFoundException("User not found");
+            throw new NotFoundPlainTextException("User not found");
         }
         if (!session.users().removeFederatedIdentity(realm, user, provider)) {
-            throw new NotFoundException("Link not found");
+            throw new NotFoundPlainTextException("Link not found");
         }
     }
 
@@ -337,7 +337,7 @@ public class UsersResource {
         auth.requireView();
         UserModel user = session.users().getUserByUsername(username, realm);
         if (user == null) {
-            throw new NotFoundException("User not found");
+            throw new NotFoundPlainTextException("User not found");
         }
 
         List<UserConsentModel> consents = user.getConsents();
@@ -363,7 +363,7 @@ public class UsersResource {
         auth.requireManage();
         UserModel user = session.users().getUserByUsername(username, realm);
         if (user == null) {
-            throw new NotFoundException("User not found");
+            throw new NotFoundPlainTextException("User not found");
         }
 
         ClientModel client = realm.getClientByClientId(clientId);
@@ -372,7 +372,7 @@ public class UsersResource {
             // Logout clientSessions for this user and client
             AuthenticationManager.backchannelUserFromClient(session, realm, user, client, uriInfo, headers);
         } else {
-            throw new NotFoundException("Consent not found for user " + username + " and client " + clientId);
+            throw new NotFoundPlainTextException("Consent not found for user " + username + " and client " + clientId);
         }
     }
 
@@ -388,7 +388,7 @@ public class UsersResource {
         auth.requireManage();
         UserModel user = session.users().getUserByUsername(username, realm);
         if (user == null) {
-            throw new NotFoundException("User not found");
+            throw new NotFoundPlainTextException("User not found");
         }
 
         List<UserSessionModel> userSessions = session.sessions().getUserSessions(realm, user);
@@ -411,7 +411,7 @@ public class UsersResource {
         UserRepresentation rep = getUser(username);
         UserModel user = session.users().getUserByUsername(username, realm);
         if (user == null) {
-            throw new NotFoundException("User not found");
+            throw new NotFoundPlainTextException("User not found");
         }
 
         boolean removed = new UserManager(session).removeUser(realm, user);
@@ -491,7 +491,7 @@ public class UsersResource {
 
         UserModel user = session.users().getUserByUsername(username, realm);
         if (user == null) {
-            throw new NotFoundException("User not found");
+            throw new NotFoundPlainTextException("User not found");
         }
 
         MappingsRepresentation all = new MappingsRepresentation();
@@ -542,7 +542,7 @@ public class UsersResource {
 
         UserModel user = session.users().getUserByUsername(username, realm);
         if (user == null) {
-            throw new NotFoundException("User not found");
+            throw new NotFoundPlainTextException("User not found");
         }
 
         Set<RoleModel> realmMappings = user.getRealmRoleMappings();
@@ -568,7 +568,7 @@ public class UsersResource {
 
         UserModel user = session.users().getUserByUsername(username, realm);
         if (user == null) {
-            throw new NotFoundException("User not found");
+            throw new NotFoundPlainTextException("User not found");
         }
 
         Set<RoleModel> roles = realm.getRoles();
@@ -596,7 +596,7 @@ public class UsersResource {
 
         UserModel user = session.users().getUserByUsername(username, realm);
         if (user == null) {
-            throw new NotFoundException("User not found");
+            throw new NotFoundPlainTextException("User not found");
         }
 
         Set<RoleModel> available = realm.getRoles();
@@ -618,13 +618,13 @@ public class UsersResource {
         logger.debugv("** addRealmRoleMappings: {0}", roles);
         UserModel user = session.users().getUserByUsername(username, realm);
         if (user == null) {
-            throw new NotFoundException("User not found");
+            throw new NotFoundPlainTextException("User not found");
         }
 
         for (RoleRepresentation role : roles) {
             RoleModel roleModel = realm.getRole(role.getName());
             if (roleModel == null || !roleModel.getId().equals(role.getId())) {
-                throw new NotFoundException("Role not found");
+                throw new NotFoundPlainTextException("Role not found");
             }
             user.grantRole(roleModel);
         }
@@ -647,7 +647,7 @@ public class UsersResource {
         logger.debug("deleteRealmRoleMappings");
         UserModel user = session.users().getUserByUsername(username, realm);
         if (user == null) {
-            throw new NotFoundException("User not found");
+            throw new NotFoundPlainTextException("User not found");
         }
 
         if (roles == null) {
@@ -660,7 +660,7 @@ public class UsersResource {
             for (RoleRepresentation role : roles) {
                 RoleModel roleModel = realm.getRole(role.getName());
                 if (roleModel == null || !roleModel.getId().equals(role.getId())) {
-                    throw new NotFoundException("Role not found");
+                    throw new NotFoundPlainTextException("Role not found");
                 }
                 user.deleteRoleMapping(roleModel);
             }
@@ -671,13 +671,13 @@ public class UsersResource {
     public UserClientRoleMappingsResource getUserClientRoleMappingsResource(@PathParam("username") String username, @PathParam("clientId") String clientId) {
         UserModel user = session.users().getUserByUsername(username, realm);
         if (user == null) {
-            throw new NotFoundException("User not found");
+            throw new NotFoundPlainTextException("User not found");
         }
 
         ClientModel client = realm.getClientByClientId(clientId);
 
         if (client == null) {
-            throw new NotFoundException("Client not found");
+            throw new NotFoundPlainTextException("Client not found");
         }
 
         return new UserClientRoleMappingsResource(realm, auth, user, client);
@@ -687,13 +687,13 @@ public class UsersResource {
     public UserClientRoleMappingsResource getUserClientRoleMappingsResourceById(@PathParam("username") String username, @PathParam("id") String id) {
         UserModel user = session.users().getUserByUsername(username, realm);
         if (user == null) {
-            throw new NotFoundException("User not found");
+            throw new NotFoundPlainTextException("User not found");
         }
 
         ClientModel client = realm.getClientById(id);
 
         if (client == null) {
-            throw new NotFoundException("Client not found");
+            throw new NotFoundPlainTextException("Client not found");
         }
 
         return new UserClientRoleMappingsResource(realm, auth, user, client);
@@ -714,7 +714,7 @@ public class UsersResource {
 
         UserModel user = session.users().getUserByUsername(username, realm);
         if (user == null) {
-            throw new NotFoundException("User not found");
+            throw new NotFoundPlainTextException("User not found");
         }
         if (pass == null || pass.getValue() == null || !CredentialRepresentation.PASSWORD.equals(pass.getType())) {
             throw new BadRequestException("No password provided");
@@ -744,7 +744,7 @@ public class UsersResource {
 
         UserModel user = session.users().getUserByUsername(username, realm);
         if (user == null) {
-            throw new NotFoundException("User not found");
+            throw new NotFoundPlainTextException("User not found");
         }
 
         user.setTotp(false);
