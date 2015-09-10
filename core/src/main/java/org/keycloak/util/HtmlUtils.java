@@ -17,6 +17,8 @@
  */
 package org.keycloak.util;
 
+import java.util.Objects;
+
 /**
  * @author pedroigor
  */
@@ -42,4 +44,32 @@ public class HtmlUtils {
         return escaped.toString();
     }
 
+    public static String escapeHtml(String value) {
+        if ( value == null ) return null;
+        StringBuilder escaped = new StringBuilder();
+
+        for (int i = 0; i < value.length(); i++) {
+            char chr = value.charAt(i);
+
+            if ( chr == '&' ) {
+                escaped.append("&amp;");
+            } else if ( chr == '<' ) {
+                escaped.append("&lt;");
+            } else if ( chr == '>' ) {
+                escaped.append("&gt;");
+            } else {
+                escaped.append(chr);
+            }
+        }
+        return escaped.toString();
+    }
+
+    public static String[] escapeHtml(Object ... values) {
+        if ( values == null ) return null;
+        String[] strings = new String[values.length];
+        for (int i = 0; i < values.length;i++) {
+            strings[i] = escapeHtml(Objects.toString(values[i], null));
+        }
+        return strings;
+    }
 }

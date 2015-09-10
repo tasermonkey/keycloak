@@ -50,6 +50,7 @@ import org.keycloak.models.UserModel;
 import org.keycloak.models.UserSessionModel;
 import org.keycloak.models.utils.FormMessage;
 import org.keycloak.services.Urls;
+import org.keycloak.util.HtmlUtils;
 
 /**
  * @author <a href="mailto:sthorger@redhat.com">Stian Thorgersen</a>
@@ -220,7 +221,7 @@ public class FreeMarkerAccountProvider implements AccountProvider {
         if (message == null)
             return null;
         if (messagesBundle.containsKey(message.getMessage())) {
-	    return new MessageFormat(messagesBundle.getProperty(message.getMessage()), locale).format(message.getParameters());
+	    return new MessageFormat(messagesBundle.getProperty(message.getMessage()), locale).format(HtmlUtils.escapeHtml(message.getParameters()));
         } else {
             return message.getMessage();
         }

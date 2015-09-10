@@ -39,6 +39,7 @@ import org.keycloak.models.UserModel;
 import org.keycloak.models.utils.FormMessage;
 import org.keycloak.services.messages.Messages;
 import org.keycloak.services.Urls;
+import org.keycloak.util.HtmlUtils;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
@@ -326,7 +327,7 @@ import java.util.concurrent.TimeUnit;
         if (message == null)
             return null;
         if (messagesBundle.containsKey(message.getMessage())) {
-            return new MessageFormat(messagesBundle.getProperty(message.getMessage()), locale).format(message.getParameters());
+            return new MessageFormat(messagesBundle.getProperty(message.getMessage()), locale).format(HtmlUtils.escapeHtml(message.getParameters()));
         } else {
             return message.getMessage();
         }
