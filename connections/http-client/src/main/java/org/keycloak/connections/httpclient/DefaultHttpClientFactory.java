@@ -1,5 +1,10 @@
 package org.keycloak.connections.httpclient;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.KeyStore;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -14,11 +19,6 @@ import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.KeycloakSessionFactory;
 import org.keycloak.common.util.EnvUtil;
 import org.keycloak.common.util.KeystoreUtil;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.security.KeyStore;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author <a href="mailto:sthorger@redhat.com">Stian Thorgersen</a>
