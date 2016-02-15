@@ -1,5 +1,22 @@
 package org.keycloak.adapters;
 
+import java.io.IOException;
+import java.security.KeyStore;
+import java.security.SecureRandom;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLException;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.SSLSocket;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.HttpClient;
 import org.apache.http.conn.ClientConnectionManager;
@@ -20,23 +37,6 @@ import org.apache.http.params.HttpConnectionParams;
 import org.keycloak.representations.adapters.config.AdapterConfig;
 import org.keycloak.common.util.EnvUtil;
 import org.keycloak.common.util.KeystoreUtil;
-
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLException;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.SSLSocket;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
-import java.io.IOException;
-import java.security.KeyStore;
-import java.security.SecureRandom;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Abstraction for creating HttpClients. Allows SSL configuration.
@@ -90,6 +90,7 @@ public class HttpClientBuilder {
     protected int maxPooledPerRoute = 0;
     protected long connectionTTL = -1;
     protected TimeUnit connectionTTLUnit = TimeUnit.MILLISECONDS;
+    protected boolean connectionStaleCheck = false;
     protected HostnameVerifier verifier = null;
     protected long socketTimeout = -1;
     protected TimeUnit socketTimeoutUnits = TimeUnit.MILLISECONDS;
@@ -130,6 +131,12 @@ public class HttpClientBuilder {
         this.connectionTTLUnit = unit;
         return this;
     }
+
+    public HttpClientBuilder connectionStaleCheck(boolean connectionStaleCheck) {
+        this.connectionStaleCheck = connectionStaleCheck;
+        return this;
+    }
+
 
     public HttpClientBuilder maxPooledPerRoute(int maxPooledPerRoute) {
         this.maxPooledPerRoute = maxPooledPerRoute;
@@ -279,6 +286,9 @@ public class HttpClientBuilder {
             {
                 HttpConnectionParams.setConnectionTimeout(params, (int)establishConnectionTimeoutUnits.toMillis(establishConnectionTimeout));
             }
+            if (connectionStaleCheck) {
+                HttpConnectionParams.setStaleCheckingEnabled(params, true);
+            }
             DefaultHttpClient client = new DefaultHttpClient(cm, params);
             if (disableCookieCache) {
                 client.setCookieStore(new CookieStore() {
@@ -347,6 +357,8 @@ public class HttpClientBuilder {
         } else {
             trustStore(truststore);
         }
+        connectionTTL = adapterConfig.getConnectionTTL();
+        connectionStaleCheck = adapterConfig.getConnectionStaleCheck();
         return build();
     }
 }

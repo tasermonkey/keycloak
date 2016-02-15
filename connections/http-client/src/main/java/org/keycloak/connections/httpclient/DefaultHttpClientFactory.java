@@ -1,5 +1,10 @@
 package org.keycloak.connections.httpclient;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.KeyStore;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -15,11 +20,6 @@ import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.KeycloakSessionFactory;
 import org.keycloak.common.util.EnvUtil;
 import org.keycloak.common.util.KeystoreUtil;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.security.KeyStore;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author <a href="mailto:sthorger@redhat.com">Stian Thorgersen</a>
@@ -104,6 +104,8 @@ public class DefaultHttpClientFactory implements HttpClientFactory {
                     long establishConnectionTimeout = config.getLong("establish-connection-timeout-millis", -1L);
                     int maxPooledPerRoute = config.getInt("max-pooled-per-route", 0);
                     int connectionPoolSize = config.getInt("connection-pool-size", 200);
+                    long connectionTtl = config.getInt("connection-ttl-millis", -1);
+                    boolean connectionStaleCheck = config.getBoolean("connection-stale-check", false);
                     boolean disableCookies = config.getBoolean("disable-cookies", true);
                     String clientKeystore = config.get("client-keystore");
                     String clientKeystorePassword = config.get("client-keystore-password");
@@ -120,6 +122,8 @@ public class DefaultHttpClientFactory implements HttpClientFactory {
                     HttpClientBuilder builder = new HttpClientBuilder();
                     builder.socketTimeout(socketTimeout, TimeUnit.MILLISECONDS)
                             .establishConnectionTimeout(establishConnectionTimeout, TimeUnit.MILLISECONDS)
+                            .connectionTTL(connectionTtl, TimeUnit.MILLISECONDS)
+                            .connectionStaleCheck(connectionStaleCheck)
                             .maxPooledPerRoute(maxPooledPerRoute)
                             .connectionPoolSize(connectionPoolSize)
                             .disableCookies(disableCookies);

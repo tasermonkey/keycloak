@@ -14,7 +14,7 @@ import org.codehaus.jackson.annotate.JsonPropertyOrder;
         "use-resource-role-mappings",
         "enable-cors", "cors-max-age", "cors-allowed-methods",
         "expose-token", "bearer-only",
-        "connection-pool-size",
+        "connection-pool-size", "connection-ttl-millis", "connection-stale-check",
         "allow-any-hostname", "disable-trust-manager", "truststore", "truststore-password",
         "client-keystore", "client-keystore-password", "client-key-password",
         "auth-server-url-for-backend-requests", "always-refresh-token",
@@ -38,6 +38,10 @@ public class AdapterConfig extends BaseAdapterConfig {
     protected String clientKeyPassword;
     @JsonProperty("connection-pool-size")
     protected int connectionPoolSize = 20;
+    @JsonProperty("connection-ttl-millis")
+    protected long connectionTTL = -1;
+    @JsonProperty("connection-stale-check")
+    private boolean connectionStaleCheck = false;
     @JsonProperty("auth-server-url-for-backend-requests")
     protected String authServerUrlForBackendRequests;
     @JsonProperty("always-refresh-token")
@@ -117,6 +121,22 @@ public class AdapterConfig extends BaseAdapterConfig {
 
     public String getAuthServerUrlForBackendRequests() {
         return authServerUrlForBackendRequests;
+    }
+
+    public long getConnectionTTL() {
+        return connectionTTL;
+    }
+
+    public void setConnectionTTL(long ttl) {
+        connectionTTL = ttl;
+    }
+
+    public void setConnectionStaleCheck(boolean value) {
+        connectionStaleCheck = value;
+    }
+
+    public boolean getConnectionStaleCheck() {
+        return connectionStaleCheck;
     }
 
     public void setAuthServerUrlForBackendRequests(String authServerUrlForBackendRequests) {
